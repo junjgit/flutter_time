@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../models/models.dart'; // Updated import path
-import '../providers/project_task_provider.dart';
+import '../models/models.dart'; // Import your models
+import '../providers/project_task_provider.dart'; // Import your provider
 
 class TimeEntryListScreen extends StatelessWidget {
   @override
