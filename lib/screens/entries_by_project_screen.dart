@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../models/models.dart';
 import '../providers/project_task_provider.dart';
 
 class EntriesByProjectScreen extends StatelessWidget {
@@ -26,7 +27,7 @@ class EntriesByProjectScreen extends StatelessWidget {
 
         return ExpansionTile(
           title: Text('Project: $projectId'),
-          children: entries.map((entry) {
+          children: entries.map<Widget>((entry) {
             return ListTile(
               title: Text('${entry.taskId} - ${entry.totalTime} hours'),
               subtitle: Text('${entry.date.toString()} - Notes: ${entry.notes}'),

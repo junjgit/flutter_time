@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../providers/project_task_provider.dart';
 import 'time_entry_list_screen.dart';
 import 'entries_by_project_screen.dart';
+import 'add_time_entry_screen.dart'; // Ensure this import is present
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});

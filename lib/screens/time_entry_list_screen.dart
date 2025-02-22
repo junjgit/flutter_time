@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../models/models.dart';
 import '../providers/project_task_provider.dart';
 
 class TimeEntryListScreen extends StatelessWidget {
