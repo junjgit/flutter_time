@@ -24,17 +24,22 @@ class EntriesByProjectScreen extends StatelessWidget {
       itemBuilder: (context, index) {
         final projectId = entriesByProject.keys.elementAt(index);
         final entries = entriesByProject[projectId]!;
+        final project = provider.projects.firstWhere((p) => p.id == projectId);
 
         return ExpansionTile(
-          title: Text('Project: $projectId'),
+          title: Text('Project: ${project.name}'),
           children: entries.map<Widget>((entry) {
             return ListTile(
-              title: Text('${entry.taskId} - ${entry.totalTime} hours'),
-              subtitle: Text('${entry.date.toString()} - Notes: ${entry.notes}'),
+              title: Text('${entry.taskId} - ${entry.totalTime.toStringAsFixed(2)} hours'),
+              subtitle: Text('${_formatDate(entry.date)} - Notes: ${entry.notes}'),
             );
           }).toList(),
         );
       },
     );
+  }
+
+  String _formatDate(DateTime date) {
+    return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
   }
 }

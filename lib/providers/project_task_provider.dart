@@ -21,6 +21,9 @@ class ProjectTaskProvider with ChangeNotifier {
   }
 
   void addProject(Project project) {
+    if (_projects.any((p) => p.name == project.name)) {
+      throw Exception('A project with the same name already exists.');
+    }
     _projects.add(project);
     notifyListeners();
   }
@@ -39,6 +42,9 @@ class ProjectTaskProvider with ChangeNotifier {
   }
 
   void addTask(Task task) {
+    if (_tasks.any((t) => t.name == task.name)) {
+      throw Exception('A task with the same name already exists.');
+    }
     _tasks.add(task);
     notifyListeners();
   }

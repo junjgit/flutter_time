@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/models.dart';
 import '../providers/project_task_provider.dart';
+import '../utils/dialogs.dart';
 
 class ProjectTaskManagementScreen extends StatelessWidget {
   @override
@@ -14,7 +15,6 @@ class ProjectTaskManagementScreen extends StatelessWidget {
         builder: (context, provider, child) {
           return ListView(
             children: [
-              // Projects Section
               const Padding(
                 padding: EdgeInsets.all(16.0),
                 child: Text(
@@ -37,7 +37,14 @@ class ProjectTaskManagementScreen extends StatelessWidget {
                       IconButton(
                         icon: const Icon(Icons.delete),
                         onPressed: () {
-                          provider.deleteProject(project.id);
+                          showConfirmationDialog(
+                            context: context,
+                            title: 'Delete Project',
+                            content: 'Are you sure you want to delete this project?',
+                            onConfirm: () {
+                              provider.deleteProject(project.id);
+                            },
+                          );
                         },
                       ),
                     ],
@@ -47,7 +54,6 @@ class ProjectTaskManagementScreen extends StatelessWidget {
 
               const Divider(),
 
-              // Tasks Section
               const Padding(
                 padding: EdgeInsets.all(16.0),
                 child: Text(
@@ -70,7 +76,14 @@ class ProjectTaskManagementScreen extends StatelessWidget {
                       IconButton(
                         icon: const Icon(Icons.delete),
                         onPressed: () {
-                          provider.deleteTask(task.id);
+                          showConfirmationDialog(
+                            context: context,
+                            title: 'Delete Task',
+                            content: 'Are you sure you want to delete this task?',
+                            onConfirm: () {
+                              provider.deleteTask(task.id);
+                            },
+                          );
                         },
                       ),
                     ],

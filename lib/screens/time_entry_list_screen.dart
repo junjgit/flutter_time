@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/models.dart';
 import '../providers/project_task_provider.dart';
+import '../utils/dialogs.dart';
 
 class TimeEntryListScreen extends StatelessWidget {
   const TimeEntryListScreen({super.key});
@@ -15,16 +16,27 @@ class TimeEntryListScreen extends StatelessWidget {
       itemBuilder: (context, index) {
         final entry = provider.entries[index];
         return ListTile(
-          title: Text('${entry.projectId} - ${entry.totalTime} hours'),
-          subtitle: Text('${entry.date.toString()} - Notes: ${entry.notes}'),
+          title: Text('${entry.projectId} - ${entry.totalTime.toStringAsFixed(2)} hours'),
+          subtitle: Text('${_formatDate(entry.date)} - Notes: ${entry.notes}'),
           trailing: IconButton(
             icon: const Icon(Icons.delete, color: Colors.red),
             onPressed: () {
-              provider.deleteTimeEntry(entry.id);
+              showConfirmationDialog(
+                context: context,
+                title: 'Delete Time Entry',
+                content: 'Are you sure you want to delete this time entry?',
+                onConfirm: () {
+                  provider.deleteTimeEntry(entry.id);
+                },
+              );
             },
           ),
         );
       },
     );
+  }
+
+  String _formatDate(DateTime date) {
+    return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
   }
 }

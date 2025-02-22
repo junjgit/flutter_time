@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/models.dart';
 import '../providers/project_task_provider.dart';
+import '../utils/dialogs.dart';
 
 class AddTimeEntryScreen extends StatefulWidget {
   const AddTimeEntryScreen({super.key});
@@ -42,17 +43,23 @@ class _AddTimeEntryScreenState extends State<AddTimeEntryScreen> {
         return;
       }
 
-      final timeEntry = TimeEntry(
-        id: DateTime.now().toString(),
-        projectId: _selectedProjectId!,
-        taskId: _selectedTaskId!,
-        totalTime: double.parse(_timeController.text),
-        date: _selectedDate!,
-        notes: _notesController.text,
-      );
+      try {
+        final timeEntry = TimeEntry(
+          id: DateTime.now().toString(),
+          projectId: _selectedProjectId!,
+          taskId: _selectedTaskId!,
+          totalTime: double.parse(_timeController.text),
+          date: _selectedDate!,
+          notes: _notesController.text,
+        );
 
-      Provider.of<ProjectTaskProvider>(context, listen: false).addTimeEntry(timeEntry);
-      Navigator.pop(context);
+        Provider.of<ProjectTaskProvider>(context, listen: false).addTimeEntry(timeEntry);
+        Navigator.pop(context);
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.toString())),
+        );
+      }
     }
   }
 
@@ -70,7 +77,6 @@ class _AddTimeEntryScreenState extends State<AddTimeEntryScreen> {
           key: _formKey,
           child: Column(
             children: [
-              // Project Dropdown
               DropdownButtonFormField<String>(
                 value: _selectedProjectId,
                 decoration: const InputDecoration(labelText: 'Project'),
@@ -95,7 +101,6 @@ class _AddTimeEntryScreenState extends State<AddTimeEntryScreen> {
 
               const SizedBox(height: 20),
 
-              // Task Dropdown
               DropdownButtonFormField<String>(
                 value: _selectedTaskId,
                 decoration: const InputDecoration(labelText: 'Task'),
@@ -120,7 +125,6 @@ class _AddTimeEntryScreenState extends State<AddTimeEntryScreen> {
 
               const SizedBox(height: 20),
 
-              // Time Input
               TextFormField(
                 controller: _timeController,
                 decoration: const InputDecoration(labelText: 'Time (hours)'),
@@ -138,13 +142,12 @@ class _AddTimeEntryScreenState extends State<AddTimeEntryScreen> {
 
               const SizedBox(height: 20),
 
-              // Date Picker
               Row(
                 children: [
                   Text(
                     _selectedDate == null
                         ? 'No date selected'
-                        : 'Selected Date: ${_selectedDate!.toLocal()}'.split(' ')[0],
+                        : 'Selected Date: ${_formatDate(_selectedDate!)}',
                   ),
                   const SizedBox(width: 20),
                   TextButton(
@@ -156,7 +159,6 @@ class _AddTimeEntryScreenState extends State<AddTimeEntryScreen> {
 
               const SizedBox(height: 20),
 
-              // Notes Input
               TextFormField(
                 controller: _notesController,
                 decoration: const InputDecoration(labelText: 'Notes'),
@@ -171,7 +173,6 @@ class _AddTimeEntryScreenState extends State<AddTimeEntryScreen> {
 
               const SizedBox(height: 20),
 
-              // Submit Button
               ElevatedButton(
                 onPressed: _submitForm,
                 child: const Text('Save'),
@@ -181,5 +182,9 @@ class _AddTimeEntryScreenState extends State<AddTimeEntryScreen> {
         ),
       ),
     );
+  }
+
+  String _formatDate(DateTime date) {
+    return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
   }
 }

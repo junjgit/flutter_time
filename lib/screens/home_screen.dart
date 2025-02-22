@@ -1,45 +1,72 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../models/models.dart';
 import '../providers/project_task_provider.dart';
-import 'time_entry_list_screen.dart';
-import 'entries_by_project_screen.dart';
-import 'add_time_entry_screen.dart'; // Ensure this import is present
+import 'add_time_entry_screen.dart';
+import '../utils/dialogs.dart';
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
-
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 2, // Number of tabs
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Time Tracker'),
-          bottom: const TabBar(
-            tabs: [
-              Tab(icon: Icon(Icons.list), text: 'All Entries'),
-              Tab(icon: Icon(Icons.group_work), text: 'By Project'),
-            ],
-          ),
-        ),
-        body: const TabBarView(
-          children: [
-            TimeEntryListScreen(), // First tab: List of all entries
-            EntriesByProjectScreen(), // Second tab: Entries grouped by project
-          ],
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => AddTimeEntryScreen(),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Time Entries'),
+      ),
+      body: Consumer<ProjectTaskProvider>(
+        builder: (context, provider, child) {
+          if (provider.entries.isEmpty) {
+            return const Center(
+              child: Text(
+                'No time entries yet!\nTap the "+" button to add one.',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 18, color: Colors.grey),
               ),
             );
-          },
-          child: const Icon(Icons.add),
-        ),
+          }
+          return ListView.builder(
+            itemCount: provider.entries.length,
+            itemBuilder: (context, index) {
+              final entry = provider.entries[index];
+              return ListTile(
+                title: Text('${entry.projectId} - ${entry.totalTime.toStringAsFixed(2)} hours'),
+                subtitle: Text('${_formatDate(entry.date)} - Notes: ${entry.notes}'),
+                onTap: () {
+                  // This could open a detailed view or edit screen
+                },
+                trailing: IconButton(
+                  icon: const Icon(Icons.delete, color: Colors.red),
+                  onPressed: () {
+                    showConfirmationDialog(
+                      context: context,
+                      title: 'Delete Time Entry',
+                      content: 'Are you sure you want to delete this time entry?',
+                      onConfirm: () {
+                        provider.deleteTimeEntry(entry.id);
+                      },
+                    );
+                  },
+                ),
+              );
+            },
+          );
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => AddTimeEntryScreen(),
+            ),
+          );
+        },
+        child: const Icon(Icons.add),
+        tooltip: 'Add Time Entry',
       ),
     );
+  }
+
+  String _formatDate(DateTime date) {
+    return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
   }
 }
